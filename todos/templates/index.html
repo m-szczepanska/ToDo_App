@@ -1,0 +1,48 @@
+{% include 'partials/header.html' %}
+{% load static %}
+    <div class="body">
+        <div class="column" id="left">
+            <header>
+                To do:
+                <hr>
+            </header>
+
+            {% for todo_left in left %}
+            <div class="todo" draggable="true" id={{ todo_left.id }}>
+                <a href="/todos/details/{{todo_left.id}}">{{todo_left.title}}</a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="column" id="middle">
+            <header>
+                In progress:
+                <hr>
+            </header>
+
+            {% for todo_middle in middle %}
+            <div class="todo" draggable="true" id={{ todo_middle.id }}>
+                <a href="/todos/details/{{todo_middle.id}}">{{todo_middle.title}}</a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="column" id="right">
+            <header>
+                Done:
+                <hr>
+            </header>
+
+            {% for todo_right in right %}
+            <div class="todo" draggable="true" id={{ todo_right.id }}>
+                <a href="/todos/details/{{todo_right.id}}">{{todo_right.title}}</a>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <script src={% static 'todos/script.js' %}></script>
+{% include 'partials/footer.html' %}

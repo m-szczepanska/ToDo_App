@@ -1,0 +1,26 @@
+body {
+    font-family: monospace;
+}
+
+.column {
+    float: left;
+    width: 32vw;
+    height: 100vh;
+    border: 2px solid black;
+    font-size: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+
+.todo {
+    margin: 0.2em;
+    padding: 0.15em;
+    border: 1px groove gray;
+    font-size: 0.8em;
+    text-align: left;
+    font-weight: lighter;
+}
+
+.todo_id {
+    font-size: 0;
+}
