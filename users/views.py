@@ -4,15 +4,11 @@ from django.http import HttpResponse
 
 from .models import User
 
-# Create your views here.
 
 # TODO: Login error how
 # TODO: Update all urls so that login page is first
-
-    # TODO: Check sessions
-# TODO: Next -> relate todos to users (zrobić user id)
-# TODO: Alter todo views to get user todos
-
+# TODO: Fix the login template location
+#       (it's in /templates, not in /users/templates)
 def login_view(request):
     if(request.method == 'POST'):
         user_name = request.POST['username']
