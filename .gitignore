@@ -10,3 +10,6 @@
 
 # Notes, prototypes, development crap, backups
 /__notes
+
+# Mac OS
+*.DS_Store

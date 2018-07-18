@@ -1,11 +1,15 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from .models import Todo
 # Create your views here.
 
 
 def index(request):
+    user_id = request.user.id
+    if not user_id:
+        return HttpResponseRedirect(reverse('login'))
+
     left = Todo.objects.filter(column_id='left')#.order_by(-'updated_at')
     middle = Todo.objects.filter(column_id='middle')
     right = Todo.objects.filter(column_id='right')
@@ -18,6 +22,10 @@ def index(request):
 
 
 def details(request, id):
+    user_id = request.user.id
+    if not user_id:
+        return HttpResponseRedirect(reverse('login'))
+
     todo = Todo.objects.get(id=id)
     template_name = 'detail.html'
     context = {'todo': todo}
@@ -25,6 +33,10 @@ def details(request, id):
 
 
 def update(request, id):
+    user_id = request.user.id
+    if not user_id:
+        return HttpResponseRedirect(reverse('login'))
+
     # TODO: This should be a PUT
     query_string = request.GET.urlencode()
     # Fail if request doesn't have data that we need
@@ -42,6 +54,10 @@ def update(request, id):
 
 
 def add(request):
+    user_id = request.user.id
+    if not user_id:
+        return HttpResponseRedirect(reverse('login'))
+
     if (request.method == 'POST'):
         title = request.POST['title']
         text = request.POST['text']

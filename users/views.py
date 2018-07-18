@@ -1,13 +1,45 @@
-from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+
+from .models import User
 
 # Create your views here.
-# TODO: Add view for logging in
-# TODO: Add it to urls
-# TODO: Add users.urls to todolist.urls -> uncomment
-# TODO: Add template for logging in
-# TODO: Figure out how to check password
-#       -> user_instance.check_password('Password_Typed_In_By_User_Here')
-# TODO: Update all urls so that login page is first
-# TODO: Check sessions
 
-# TODO: Next -> relate todos to users
+# TODO: Login error how
+# TODO: Update all urls so that login page is first
+
+    # TODO: Check sessions
+# TODO: Next -> relate todos to users (zrobić user id)
+# TODO: Alter todo views to get user todos
+
+def login_view(request):
+    if(request.method == 'POST'):
+        user_name = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=user_name, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/todos')
+        else:
+            return render(request, 'login.html')
+    else:
+        return render(request, 'login.html')
+
+    #     try:
+    #         user = User.objects.get(username=user_name)
+    #     except User.DoesNotExist:
+    #         return render(request, 'login.html')
+    #     if user.check_password(password):
+    #         login(request, user)
+    #         return redirect('/todos')
+    #     else:
+    #         return render(request, 'login.html')
+    # else:
+    #     return render(request, 'login.html')
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'login.html')
