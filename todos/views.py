@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 
-from .models import Todo
+from todos.models import Todo
 
 
 def index(request):
@@ -10,7 +10,6 @@ def index(request):
     if not user_id:
         return HttpResponseRedirect(reverse('login'))
 
-    # TODO: Maybe ordering by when todo was updated? #.order_by(-'updated_at')
     left = Todo.objects.filter(column_id='left', user=user_id)
     middle = Todo.objects.filter(column_id='middle', user=user_id)
     right = Todo.objects.filter(column_id='right', user=user_id)
@@ -37,7 +36,6 @@ def update(request, id):
     if not user_id:
         return HttpResponseRedirect(reverse('login'))
 
-    # TODO: This should be a PUT
     query_string = request.GET.urlencode()
     # Fail if request doesn't have data that we need
     if 'column_id' not in query_string:
@@ -68,3 +66,19 @@ def add(request):
         return redirect('/todos')
     else:
         return render(request, 'add.html')
+
+
+def delete(request):
+    user_id = request.user.id
+    if not user_id:
+        return HttpResponseRedirect(reverse('login'))
+
+    if request.method == 'POST':
+        todo_id = request.POST['todo_id']
+        todo = Todo.objects.filter(id=todo_id, user_id=user_id)
+        todo.delete()
+        return redirect('/todos')
+    else:
+        todos = Todo.objects.filter(user=user_id)
+        context = {'todos': todos}
+        return render(request, 'delete.html', context)

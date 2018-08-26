@@ -3,44 +3,28 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
       <link rel="stylesheet" href="{% static 'todos/style.css' %}" />
       <title>TodoList Login</title>
   </head>
   <body>
-    <header>
-        <h1>List of todos</h1>
-        <a href="/todos/add">Add Todo</a>
-        <hr>
-    </header>
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
         <label for="username">Login</label><br/>
         <input type="text" name="username" id="username"/>
-        <br>
+        <br><br>
         <label for="password">Password</label><br/>
-        <input name="password" id="password"></input>
+        <input type="password" name="password" id="password"></input>
         <br>
+        <div class="error">
+            <p>{{ error }}</p>
+        </div>
+        <div class="message">
+            <p>{{ message }}</p>
+        </div>
         <input type="submit" value="Log in">
+        <br><br>
+        <p>If you don't remember your password go to the >>
+            <a href="{% url 'password_reset_request' %}"> Reset password</a>
+            << page.</p>
     </body>
 </html>
-
-
-
-<!--
-
-
-
-
-{% extends 'base.html' %}
-
-{% block title %}Login{% endblock %}
-
-{% block content %}
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-{% endblock %} -->

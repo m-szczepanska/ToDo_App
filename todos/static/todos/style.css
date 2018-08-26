@@ -24,3 +24,11 @@ body {
 .todo_id {
     font-size: 0;
 }
+
+.error {
+    color: red;
+}
+
+.message {
+    color: green;
+}

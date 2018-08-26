@@ -1,14 +1,13 @@
+import time
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
-from .models import User
+from users.models import User, PasswordResetToken
+from users.services import send_password_reset_mail
+from users.password_validator import MinimumLengthValidator, NumericPasswordValidator
 
 
-# TODO: Login error how
-# TODO: Update all urls so that login page is first
-# TODO: Fix the login template location
-#       (it's in /templates, not in /users/templates)
 def login_view(request):
     if(request.method == 'POST'):
         user_name = request.POST['username']
@@ -19,23 +18,101 @@ def login_view(request):
             login(request, user)
             return redirect('/todos')
         else:
-            return render(request, 'login.html')
+            context = {"error": "Login or password incorrect"}
+            return render(request, 'login.html', context)
     else:
         return render(request, 'login.html')
-
-    #     try:
-    #         user = User.objects.get(username=user_name)
-    #     except User.DoesNotExist:
-    #         return render(request, 'login.html')
-    #     if user.check_password(password):
-    #         login(request, user)
-    #         return redirect('/todos')
-    #     else:
-    #         return render(request, 'login.html')
-    # else:
-    #     return render(request, 'login.html')
 
 
 def logout_view(request):
     logout(request)
     return render(request, 'login.html')
+
+
+def password_reset_request_view(request):
+    if(request.method == 'POST'):
+        user_email = request.POST['user_email']
+        try:
+            user = User.objects.get(email=user_email)
+        except:
+            error = "Given email adress is not registered in database."
+            context = {"error": error}
+            return render(request, 'password_reset_request.html', context)
+
+        token = PasswordResetToken(user=user)
+        token.save()
+        send_password_reset_mail(user_email, token.uuid)
+        reset_correct_message = (
+            "A link to reset your password has been sent to the e-mail address "
+            "you entered."
+        )
+        context = {"message": reset_correct_message}
+        return render(request, 'password_reset_request.html', context)
+    else:
+        return render(request, 'password_reset_request.html')
+
+
+def password_reset_view(request):
+    # Fail if request doesn't have data that we need
+    # Check if querystring has a 'token' (bad: t=1234-5678-9999)
+
+    if(request.method == 'POST'):
+        # Ugly hack; browser always adds / at end of token
+        token_uuid = request.POST.get('token', ' ')[:-1]
+        if not token_uuid:
+            return HttpResponse(status=400)
+
+        # Check if token is in db (bad: user tried to hack and typed their own
+        # token)
+        try:
+            token = PasswordResetToken.objects.get(uuid=token_uuid)
+        except:
+            context = {"error": "Invalid token"}
+            return render(request, 'password_reset_request.html', context)
+
+        # Check if token is valid
+        if not token.is_valid:
+            context = {"error": "Token expired"}
+            return render(request, 'password_reset_request.html', context)
+
+        password_1 = request.POST['password_1']
+        password_2 = request.POST['password_2']
+
+        if password_1 != password_2:
+            context = {"error": "Passwords didn't match"}
+            return render(request, 'password_reset.html', context)
+
+        if MinimumLengthValidator.validate(password_1):
+            if NumericPasswordValidator.validate(password_1):
+                token.user.set_password(password_1)
+                token.user.save()
+                token.was_used = True
+                token.save()
+                context = {"message": "Password successfully changed"}
+                return render(request, 'login.html', context)
+            else:
+                context = {"error": "Password must contain at least 1 digit"}
+                return render(request, 'password_reset.html', context)
+        else:
+            context = {"error": "Passwords must have at least 8 characters"}
+            return render(request, 'password_reset.html', context)
+
+    else:
+        token_uuid = request.GET.get('token')
+        if not token_uuid:
+            return HttpResponse(status=400)
+
+        # Check if token is in db (bad: user tried to hack and typed their own
+        # token)
+        try:
+            token = PasswordResetToken.objects.get(uuid=token_uuid)
+        except:
+            context = {"error": "Invalid token"}
+            return render(request, 'password_reset_request.html', context)
+
+        # Check if token is valid
+        if not token.is_valid:
+            context = {"error": "Token expired"}
+            return render(request, 'password_reset_request.html', context)
+
+        return render(request, 'password_reset.html')
