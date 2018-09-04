@@ -1,6 +1,5 @@
 # Git env
-.git
-
+*.git/
 # SQLite
 *.sqlite3
 

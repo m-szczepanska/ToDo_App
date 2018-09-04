@@ -9,5 +9,7 @@ urlpatterns = [
         views.password_reset_request_view,
         name='password_reset_request'
     ),
-    path('password_reset', views.password_reset_view, name='password_reset')
+    path('password_reset', views.password_reset_view, name='password_reset'),
+    path('register_request/', views.register_request_view, name='register_request'),
+    path('register/', views.register_view, name='register')
 ]

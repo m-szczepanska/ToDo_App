@@ -2,8 +2,12 @@
     <a href="/todos">Go to the todos</a>
     <div class="borders">
       <h1>{{todo.title}}</h1>
-      <h3>{{todo.text}}</h3>
+      <div class="todo.text">
+          <h3>"{{todo.text}}"<h3>
+      </div>
       <br>
       <p>Created on {{todo.created_at}}
     </div>
+    <br>
+    <input type="button_delete" value="Delete the todo" onclick="window.location.href='{% url 'delete' %}'" />
 {% include 'partials/footer.html' %}

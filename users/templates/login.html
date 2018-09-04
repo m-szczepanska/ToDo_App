@@ -23,8 +23,9 @@
         </div>
         <input type="submit" value="Log in">
         <br><br>
-        <p>If you don't remember your password go to the >>
-            <a href="{% url 'password_reset_request' %}"> Reset password</a>
-            << page.</p>
+        <input type="button" value="Password reset" onclick="window.location.href='{% url 'password_reset_request' %}'" />
+        <br><br>
+        <input type="button" value="Create an account" onclick="window.location.href='{% url 'register_request' %}'" />
+
     </body>
 </html>
