@@ -1,0 +1,15 @@
+{% include 'partials/header.html' %}
+{% load static %}
+    <form action="{% url 'edit' todo.id %}" method="post">
+        {% csrf_token %}
+        <label for="title">Title</label><br/>
+        <input type="text" name="title" id="title" value={{ todo.title }} />
+        <br>
+        <label for="title">Text</label><br/>
+        <input type="text" name="text" id="text" value={{ todo.text }} />
+        <br>
+        <input type="submit" value="Save"/>
+    </form>
+    <br>
+    <a href="/">Home</a>
+{% include 'partials/footer.html' %}

@@ -50,6 +50,24 @@ def update(request, id):
     todo.save()
     return HttpResponse(status=204)
 
+def edit(request, id):
+    user_id = request.user.id
+    if not user_id:
+        return HttpResponseRedirect(reverse('login'))
+
+    if request.method == 'POST':
+        title = request.POST['title']
+        text = request.POST['text']
+        todo = Todo.objects.get(id=id, user_id=user_id)
+        todo.title = title
+        todo.text = text
+        todo.save()
+        return redirect('/todos')
+    else:
+        todo = Todo.objects.get(id=id, user_id=user_id)
+        context = {'todo': todo}
+        return render(request, 'edit.html', context)
+
 
 def add(request):
     user_id = request.user.id
