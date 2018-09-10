@@ -9,5 +9,11 @@
       <p>Created on {{todo.created_at}}
     </div>
     <br>
-    <input type="button_delete" value="Delete the todo" onclick="window.location.href='{% url 'delete' %}'" />
+    <form action='{% url 'delete' todo.id %}' method="post">
+        {% csrf_token %}
+        <p>A todo "{{ todo.title }}" will be deleted</p>
+        <br>
+        <input type="submit" value="Delete"/>
+    </form>
+
 {% include 'partials/footer.html' %}

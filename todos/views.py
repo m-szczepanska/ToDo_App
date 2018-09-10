@@ -68,17 +68,12 @@ def add(request):
         return render(request, 'add.html')
 
 
-def delete(request):
+def delete(request, id):
     user_id = request.user.id
     if not user_id:
         return HttpResponseRedirect(reverse('login'))
 
     if request.method == 'POST':
-        todo_id = request.POST['todo_id']
-        todo = Todo.objects.filter(id=todo_id, user_id=user_id)
+        todo = Todo.objects.get(id=id, user_id=user_id)
         todo.delete()
         return redirect('/todos')
-    else:
-        todos = Todo.objects.filter(user=user_id)
-        context = {'todos': todos}
-        return render(request, 'delete.html', context)
